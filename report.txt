@@ -1,0 +1,47 @@
+Tiled 2D Convolution
+
+3)  Report.
+    It's time to do some performance testing and analysis.  Included in the 
+    MP3-convolution_block folder is a folder called "test", which contains two 
+    test case input sets.  Using these test cases, and any others that you wish 
+    to create to support your findings, provide answers to the following questions, 
+    along with a short description of how you arrived at those answers.  
+
+    You are free to use any timing library you like, as long as it has a reasonable 
+    accuracy.  Search for the section on Timing in the CUDA C BestPractices Guide to 
+    learn about how to use CUDA timing libraries. 
+
+    Remember that kernel invocations are normally asynchronous, so if you want accurate
+    timing of the kernel's running time, you need to insert a call to
+    cudaDeviceSynchronize() after the kernel invocation.  
+
+    1.  What is the measured floating-point computation rate for the CPU and GPU kernels 
+    in this application?  How do they each scale with the size of the input?
+
+    32x32 - 5x5
+    0.976353928 GFlops - GPU
+    0.698596113 GFlops - CPU
+
+    1024x1024 - 5x5
+    413.476340694 GFlops - GPU
+    0.638099411 GFlops - CPU
+
+    I timed both the CPU Gold function as well as the GPU Kernel and divided the number of floating point
+    computations[2(multiply, add) * 25(kernel size) * image_size] by the time taken for them to execute.
+    The computation rate seems to be constant with increase in input size for CPU while for GPU,
+    it seems to increase manifold.
+
+    2.  How much time is spent as an overhead cost of using the GPU for
+    computation?  Consider all code executed within your host function, with
+    the exception of the kernel itself, as overhead.  How does the overhead scale 
+    with the size of the input?
+
+    32x32 - 5x5
+    8.501599 milliseconds
+    
+    1024x1024 - 5x5
+    1.028704 milliseconds
+
+    On scaling up input sizes, the overhead time increases as well due to the number of elements to be copied over and back.
+
+
